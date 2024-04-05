@@ -12,7 +12,7 @@
         android:layout_height="45dp"
         android:layout_weight="0.2"
         android:gravity="center"
-        app:srcCompat="@android:drawable/checkbox_on_background" />
+        app:srcCompat="@drawable/receptor" />
 
     <TextView
         android:id="@+id/idContacto"
@@ -20,7 +20,7 @@
         android:layout_height="45dp"
         android:layout_weight="0.1"
         android:gravity="center" />
-
+s
     <TextView
         android:id="@+id/nombre"
         android:layout_width="0dp"
