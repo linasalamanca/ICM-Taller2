@@ -27,6 +27,11 @@ class MainActivity : AppCompatActivity() {
         val BTNMapa = findViewById<ImageButton>(R.id.btnMapa)
 
         BTNContactos.setOnClickListener {solicitarPermisos()}
+        BTNMapa.setOnClickListener {
+            val intent = Intent(this@MainActivity, MapaActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
     fun solicitarPermisos(){
