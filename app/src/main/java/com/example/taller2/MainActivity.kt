@@ -32,6 +32,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        BTNCamara.setOnClickListener{
+            val intent = Intent(this@MainActivity, CamaraActivity::class.java)
+            startActivity(intent)
+        }
 
     }
     fun solicitarPermisos(){
