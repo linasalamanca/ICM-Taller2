@@ -8,7 +8,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+        android:maxSdkVersion="1" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -34,6 +37,9 @@
         <activity
             android:name=".ContactosActivity"
             android:exported="false" />
+        <activity
+            android:name=".MapaActivity"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
