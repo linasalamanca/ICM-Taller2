@@ -91,6 +91,7 @@ class MapsActivity : AppCompatActivity() {
                 val location = getLocationFromAddress(v.text.toString())
                 location?.let {
                     actualizarMarcador(it.latitude, it.longitude)
+                    mostrarDistanciaYToast(latitud, longitud, it.latitude, it.longitude)  // latitud y longitud son las coordenadas actuales del usuario
                     bindingMapa.osmMap.controller.animateTo(GeoPoint(it.latitude, it.longitude))
                     bindingMapa.osmMap.controller.setZoom(18.0)
                 }
@@ -105,6 +106,7 @@ class MapsActivity : AppCompatActivity() {
                     val projection = mapView?.projection
                     val geoPoint = projection?.fromPixels(e.x.toInt(), e.y.toInt()) as GeoPoint
                     getAddressFromLocation(geoPoint.latitude, geoPoint.longitude, mapView.context)
+                    mostrarDistanciaYToast(latitud, longitud, geoPoint.latitude, geoPoint.longitude)
                     return true
                 }
                 return false
@@ -290,4 +292,11 @@ class MapsActivity : AppCompatActivity() {
         bindingMapa.osmMap.invalidate()
     }
 
+    private fun mostrarDistanciaYToast(latitudAntigua: Double, longitudAntigua: Double, nuevaLatitud: Double, nuevaLongitud: Double) {
+        val startPoint = GeoPoint(latitudAntigua, longitudAntigua)
+        val endPoint = GeoPoint(nuevaLatitud, nuevaLongitud)
+
+        val distancia = startPoint.distanceToAsDouble(endPoint) / 1000.0  // Convertir de metros a kilómetros
+        Toast.makeText(this, "Distancia hasta el marcador: ${String.format("%.2f", distancia)} km", Toast.LENGTH_LONG).show()
+    }
 }
