@@ -1,56 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/MapaBar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="Mapa" />
-
-    <fragment
-        android:id="@+id/Mapa"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    tools:context=".MapsActivity"
+    android:padding="15dp">
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="667dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/MapaBar"
-        map:cameraZoom="10"
-        map:uiRotateGestures="true"
-        map:uiZoomControls="true" />
+        android:layout_height="match_parent">
+        <org.osmdroid.views.MapView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/osmMap"
+            android:layout_alignParentBottom="true">
+        </org.osmdroid.views.MapView>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:hint="Ingresa la dirección"
+            android:background="@drawable/roundcorner"/>
+    </FrameLayout>
 
-    <EditText
-        android:id="@+id/Ubicacion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:autofillHints="longitud"
-        android:hint="Ubicacion"
-        android:inputType="text"
-        android:minHeight="10dp"
-        android:textAlignment="center"
-        android:backgroundTint="@color/black"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="76dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
