@@ -10,17 +10,20 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Geocoder
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.taller2.databinding.ActivityMapaBinding
-import android.location.LocationListener
 import org.json.JSONArray
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
@@ -34,6 +37,8 @@ import java.io.FileWriter
 import java.io.Writer
 import java.util.Date
 import kotlin.math.roundToInt
+
+
 
 class MapsActivity : AppCompatActivity() {
 
@@ -75,6 +80,20 @@ class MapsActivity : AppCompatActivity() {
         bindingMapa.osmMap.setMultiTouchControls(true)
 
         permisos()
+        val addressInput = findViewById<EditText>(R.id.addressInput)
+        addressInput.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val location = getLocationFromAddress(v.text.toString())
+                location?.let {
+                    actualizarMarcador(it.latitude, it.longitude)
+                    bindingMapa.osmMap.controller.animateTo(GeoPoint(it.latitude, it.longitude))
+                    bindingMapa.osmMap.controller.setZoom(18.0)
+                }
+                true  // Consumir el evento aquí
+            } else {
+                false  // Dejar que otros manejadores procesen el evento
+            }
+        }
     }
 
     //Sensores de luz
@@ -214,6 +233,20 @@ class MapsActivity : AppCompatActivity() {
         locationManager.removeUpdates(locationListener)
         bindingMapa.osmMap.onPause()
     }
+
+    private fun getLocationFromAddress(strAddress: String): Location? {
+        val geocoder = Geocoder(this)
+        val addressList = geocoder.getFromLocationName(strAddress, 1)
+        if (addressList != null && addressList.isNotEmpty()) {
+            val address = addressList[0]
+            val location = Location(LocationManager.GPS_PROVIDER)
+            location.latitude = address.latitude
+            location.longitude = address.longitude
+            Log.d("Geocoder", "Dirección encontrada: Lat=${address.latitude}, Long=${address.longitude}")
+            return location
+        } else {
+            Log.d("Geocoder", "No se encontraron direcciones")
+            return null
+        }
+    }
 }
-
-
