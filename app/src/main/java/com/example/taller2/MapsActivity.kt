@@ -34,10 +34,15 @@ import org.osmdroid.views.overlay.TilesOverlay
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
+import java.io.IOException
 import java.io.Writer
 import java.util.Date
 import kotlin.math.roundToInt
-
+import java.util.Locale
+import org.osmdroid.views.overlay.Overlay
+import org.osmdroid.views.overlay.OverlayWithIW
+import android.view.MotionEvent
+import org.osmdroid.views.MapView
 
 
 class MapsActivity : AppCompatActivity() {
@@ -94,6 +99,17 @@ class MapsActivity : AppCompatActivity() {
                 false  // Dejar que otros manejadores procesen el evento
             }
         }
+        bindingMapa.osmMap.overlays.add(object : Overlay() {
+            override fun onLongPress(e: MotionEvent?, mapView: MapView?): Boolean {
+                e?.let {
+                    val projection = mapView?.projection
+                    val geoPoint = projection?.fromPixels(e.x.toInt(), e.y.toInt()) as GeoPoint
+                    getAddressFromLocation(geoPoint.latitude, geoPoint.longitude, mapView.context)
+                    return true
+                }
+                return false
+            }
+        })
     }
 
     //Sensores de luz
@@ -122,12 +138,10 @@ class MapsActivity : AppCompatActivity() {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            // Permiso no concedido, solicitarlo
             ActivityCompat.requestPermissions(this,
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE)
         } else {
-            // Permiso ya concedido, puedes proceder con la ubicación actual
             ubicacionActual()
         }
     }
@@ -142,7 +156,6 @@ class MapsActivity : AppCompatActivity() {
         override fun onLocationChanged(location: Location) {
             Log.d("MapsActivity", "Ubicación actualizada: $location")
 
-            // Actualiza la ubicación cuando cambia
             var latitudPasada = latitud
             var longitudPasada = longitud
             latitud = location.latitude
@@ -249,4 +262,32 @@ class MapsActivity : AppCompatActivity() {
             return null
         }
     }
+
+    private fun getAddressFromLocation(latitude: Double, longitude: Double, context: Context) {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        try {
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            if (addresses?.isNotEmpty() == true) {
+                val address = addresses[0].getAddressLine(0)
+                runOnUiThread {
+                    addMarker(latitude, longitude, address)
+                }
+            } else {
+                Log.d("MapsActivity", "No address found.")
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.e("MapsActivity", "Geocoder failed", e)
+        }
+    }
+
+    private fun addMarker(latitude: Double, longitude: Double, address: String) {
+        val marker = Marker(bindingMapa.osmMap)
+        marker.position = GeoPoint(latitude, longitude)
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        marker.title = address
+        bindingMapa.osmMap.overlays.add(marker)
+        bindingMapa.osmMap.invalidate()
+    }
+
 }
